@@ -1,10 +1,183 @@
 {
-  "name": "n8n-server",
-  "version": "1.0.0",
-  "scripts": {
-    "start": "npx n8n"
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "multipleMethods": true,
+        "httpMethod": [
+          "POST"
+        ],
+        "path": "cf3abaf7-87ea-4ee1-bab3-cd4bcf09b036",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -64,
+        0
+      ],
+      "id": "470395db-62fb-4c32-ae15-f4678ab2a534",
+      "name": "Webhook",
+      "webhookId": "cf3abaf7-87ea-4ee1-bab3-cd4bcf09b036",
+      "alwaysOutputData": true,
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "109d5cdb-b105-450e-b9ed-5934b3f10193",
+              "leftValue": "={{$json[\"status\"]}}",
+              "rightValue": "approved",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "376bd949-b251-408e-b9d1-1ce4d2865527",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "days"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        -112
+      ],
+      "id": "fbba413c-e01f-45cc-9a55-d1980972a94f",
+      "name": "Wait",
+      "webhookId": "6cbf9f73-c5b1-4c4c-9e34-a28cd7908730"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        288
+      ],
+      "id": "e60995de-7ca2-439c-a2ea-c97a7453cb16",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.twilio.com/2010-04-01/Accounts/AC318b4231b104b108852105c6ea111373/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "=whatsapp:+55{{$json[\"buyer_phone\"]}}"
+            },
+            {
+              "name": "From",
+              "value": "whatsapp:+14155238886"
+            },
+            {
+              "name": "ContentSid",
+              "value": "HX9833fb9bbcd56a48576081b420744386"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={\"1\":\"{{$json[\"buyer_name\"]}}\",\"2\":\"{{$json[\"checkout_url\"]}}\"}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        672,
+        -112
+      ],
+      "id": "e739eaf0-7a4e-4aff-969f-384a3298892f",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "QYr4RgkE5z2qVcLU",
+          "name": "Unnamed credential"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
-  "dependencies": {
-    "n8n": "^1.68.0"
-  }
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c1cc1d87-91ef-43d2-a52f-f43b4ec00f16",
+  "meta": {
+    "instanceId": "c288b043b8564ed5bafd8acf6dbc941cb79c7c0c99c9c2d5ba736822c7d57cb2"
+  },
+  "id": "9cdtJcouUavxrovM",
+  "tags": []
 }
